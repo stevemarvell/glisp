@@ -31,16 +31,6 @@ pub enum MathOp {
     Div,
 }
 
-#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
-pub enum CmpOp {
-    Lt,
-    Le,
-    Eq,
-    Ge,
-    Gt,
-    Ne,
-}
-
 impl MathOp {
     pub fn to_str(&self) -> &'static str {
         match self {
@@ -53,6 +43,35 @@ impl MathOp {
 }
 
 impl std::fmt::Display for MathOp {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.to_str())
+    }
+}
+
+#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
+pub enum CmpOp {
+    Lt,
+    Le,
+    Eq,
+    Ge,
+    Gt,
+    Ne,
+}
+
+impl CmpOp {
+    pub fn to_str(&self) -> &'static str {
+        match self {
+            CmpOp::Lt => "<",
+            CmpOp::Le => "<=",
+            CmpOp::Eq => "==",
+            CmpOp::Ge => ">=",
+            CmpOp::Gt => ">",
+            CmpOp::Ne => "!=",
+        }
+    }
+}
+
+impl std::fmt::Display for CmpOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_str())
     }

@@ -46,7 +46,7 @@ impl Glisp {
                 let children = self.nodes.get(gnode).unwrap();
                 let child1 = self.to_lisp(&children[0]);
                 let child2 = self.to_lisp(&children[1]);
-                format!("({:?} {} {})", op, child1, child2)
+                format!("({} {} {})", op, child1, child2)
             }
             NodeType::Cond => {
                 let children = self.nodes.get(gnode).unwrap();
