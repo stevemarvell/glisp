@@ -7,11 +7,8 @@ pub struct Gnode {
 }
 
 impl Gnode {
-    pub fn new(id: u64, node_type: NodeType) -> Gnode {
-        Gnode {
-            id: id,
-            node_type: node_type,
-        }
+    pub fn new(id: u64, node_type: NodeType) -> Self {
+        Self { id, node_type }
     }
 }
 
@@ -32,17 +29,17 @@ pub enum MathOp {
 }
 
 impl MathOp {
-    pub fn to_str(&self) -> &'static str {
+    fn to_str(&self) -> String {
         match self {
-            MathOp::Add => "+",
-            MathOp::Sub => "-",
-            MathOp::Mul => "*",
-            MathOp::Div => "/",
+            Self::Add => "+".to_string(),
+            Self::Sub => "-".to_string(),
+            Self::Mul => "*".to_string(),
+            Self::Div => "/".to_string(),
         }
     }
 }
 
-impl std::fmt::Display for MathOp {
+impl fmt::Display for MathOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_str())
     }
@@ -59,21 +56,20 @@ pub enum CmpOp {
 }
 
 impl CmpOp {
-    pub fn to_str(&self) -> &'static str {
+    fn to_str(&self) -> String {
         match self {
-            CmpOp::Lt => "<",
-            CmpOp::Le => "<=",
-            CmpOp::Eq => "==",
-            CmpOp::Ge => ">=",
-            CmpOp::Gt => ">",
-            CmpOp::Ne => "!=",
+            Self::Lt => "<".to_string(),
+            Self::Le => "<=".to_string(),
+            Self::Eq => "==".to_string(),
+            Self::Ge => ">=".to_string(),
+            Self::Gt => ">".to_string(),
+            Self::Ne => "!=".to_string(),
         }
     }
 }
 
-impl std::fmt::Display for CmpOp {
+impl fmt::Display for CmpOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_str())
     }
 }
-
