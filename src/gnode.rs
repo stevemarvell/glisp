@@ -29,7 +29,7 @@ pub enum MathOp {
 }
 
 impl MathOp {
-    fn to_str(&self) -> String {
+    fn to_string(&self) -> String {
         match self {
             Self::Add => "+".to_string(),
             Self::Sub => "-".to_string(),
@@ -41,7 +41,7 @@ impl MathOp {
 
 impl fmt::Display for MathOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_str())
+        write!(f, "{}", self.to_string())
     }
 }
 
@@ -56,7 +56,7 @@ pub enum CmpOp {
 }
 
 impl CmpOp {
-    fn to_str(&self) -> String {
+    fn to_string(&self) -> String {
         match self {
             Self::Lt => "<".to_string(),
             Self::Le => "<=".to_string(),
@@ -70,6 +70,6 @@ impl CmpOp {
 
 impl fmt::Display for CmpOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_str())
+        write!(f, "{}", self.to_string())
     }
 }

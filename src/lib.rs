@@ -29,8 +29,7 @@ impl Glisp {
     }
 
     pub fn add_link(&mut self, from: Gnode, to: &[Gnode]) {
-        let nodes = self.nodes.entry(from).or_insert(Vec::new());
-        nodes.extend(to.iter().cloned());
+        self.nodes.entry(from).or_insert_with(Vec::new).extend(to.iter().cloned());
     }
 }
 

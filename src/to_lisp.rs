@@ -6,7 +6,7 @@ pub trait ToLisp {
 }
 
 pub fn to_lisp<T: ToLisp>(x: &T, gnode: &Gnode) -> String {
-    return x.to_lisp(gnode);
+    x.to_lisp(gnode)
 }
 
 impl ToLisp for Glisp {
