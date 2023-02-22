@@ -5,7 +5,6 @@ pub use to_lisp::ToLisp;
 
 pub mod gnode;
 pub mod to_lisp;
-pub mod to_lisp_for_glisp;
 
 #[derive(Debug)]
 pub struct Glisp {
