@@ -1,15 +1,29 @@
 use std::fmt;
 
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub struct Gnode {
-    pub id: u64,
+    pub id: usize,
     pub node_type: NodeType,
+    pub children: Vec<&'static Gnode>,
     pub parent_count: usize,
 }
 
 impl Gnode {
-    pub fn new(id: u64, node_type: NodeType) -> Self {
-        Self { id, node_type, parent_count: 0 }
+    pub fn new(id: usize, node_type: NodeType) -> Self {
+        Self {
+            id,
+            node_type,
+            children: Vec::new(),
+            parent_count: 0,
+        }
+    }
+}
+
+impl Gnode {
+    pub fn add_links(&mut self, to: &[&mut Gnode]) {
+        for child in to {
+            self.children.push(child);
+        }
     }
 }
 
@@ -72,5 +86,56 @@ impl CmpOp {
 impl fmt::Display for CmpOp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_string())
+    }
+}
+
+impl Gnode {
+    pub fn evaluate(&mut self) -> i64 {
+        match self.node_type {
+            NodeType::N(n) => n,
+            NodeType::Math(op) => {
+                let [&child1, &child2] = self.children.as_slice()
+                    else {
+                        panic!("Invalid number of operands for Math node");
+                    };
+
+                let left = child1.evaluate();
+                let right = child2.evaluate();
+                match op {
+                    MathOp::Add => left + right,
+                    MathOp::Sub => left - right,
+                    MathOp::Mul => left * right,
+                    MathOp::Div => left / right,
+                }
+            }
+            NodeType::Cmp(op) => {
+                let [child1, child2] = self.children.as_slice()
+                    else {
+                        panic!("Invalid number of operands for Cmp node");
+                    };
+                let left = child1.evaluate();
+                let right = child2.evaluate();
+                let result = match op {
+                    CmpOp::Lt => left < right,
+                    CmpOp::Le => left <= right,
+                    CmpOp::Eq => left == right,
+                    CmpOp::Ge => left >= right,
+                    CmpOp::Gt => left > right,
+                    CmpOp::Ne => left != right,
+                } as i64;
+                result
+            }
+            NodeType::Cond => {
+                let [cond, then_node, else_node] = self.children.as_slice()
+                    else {
+                        panic!("Invalid number of operands for Cond node");
+                    };
+                if cond.evaluate() != 0 {
+                    then_node.evaluate()
+                } else {
+                    else_node.evaluate()
+                }
+            }
+        }
     }
 }

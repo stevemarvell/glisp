@@ -1,37 +1,36 @@
-use crate::Glisp;
 use crate::gnode::*;
 
 pub trait ToLisp {
-    fn to_lisp(&self, gnode: &Gnode) -> String;
+    fn to_lisp(&self) -> String;
 }
 
-pub fn to_lisp<T: ToLisp>(x: &T, gnode: &Gnode) -> String {
-    x.to_lisp(gnode)
+pub fn to_lisp<T: ToLisp>(x: &T) -> String {
+    x.to_lisp()
 }
 
-impl ToLisp for Glisp {
-    fn to_lisp(&self, gnode: &Gnode) -> String {
-        match gnode.node_type {
+impl ToLisp for Gnode {
+    fn to_lisp(&self) -> String {
+        match self.node_type {
             NodeType::N(n) => n.to_string(),
             NodeType::Math(op) => {
-                if let [left, right] = self.nodes.get(gnode).unwrap().as_slice() {
-                    format!("({} {} {})", op, self.to_lisp(&left), self.to_lisp(&right))
+                if let [left, right] = self.children.as_slice() {
+                    format!("({} {} {})", op, left.to_lisp(), right.to_lisp())
                 } else {
                     panic!("Invalid number of operands for Math node");
                 }
             }
             NodeType::Cmp(op) => {
-                if let [left, right] = self.nodes.get(gnode).unwrap().as_slice() {
-                    format!("({} {} {})", op, self.to_lisp(&left), self.to_lisp(&right))
+                if let [left, right] = self.children.as_slice() {
+                    format!("({} {} {})", op, left.to_lisp(), right.to_lisp())
                 } else {
                     panic!("Invalid number of operands for Cmp node");
                 }
             }
             NodeType::Cond => {
-                if let [cond, then_link, else_link] = self.nodes.get(gnode).unwrap().as_slice() {
-                    format!("(? {} {} {})", self.to_lisp(&cond), self.to_lisp(&then_link), self.to_lisp(&else_link))
+                if let [cond, then_link, else_link] = self.children.as_slice() {
+                    format!("(? {} {} {})", cond.to_lisp(), then_link.to_lisp(), else_link.to_lisp())
                 } else {
-                    panic!("Invalid number of links for Cond node");
+                    panic!("Invalid number of operands for Cond node");
                 }
             }
         }
