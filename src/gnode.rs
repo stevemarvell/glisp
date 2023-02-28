@@ -4,11 +4,12 @@ use std::fmt;
 pub struct Gnode {
     pub id: u64,
     pub node_type: NodeType,
+    pub parent_count: usize,
 }
 
 impl Gnode {
     pub fn new(id: u64, node_type: NodeType) -> Self {
-        Self { id, node_type }
+        Self { id, node_type, parent_count: 0 }
     }
 }
 

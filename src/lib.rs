@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt;
 
 use gnode::*;
 pub use to_lisp::ToLisp;
@@ -8,7 +9,7 @@ pub mod to_lisp;
 
 #[derive(Debug)]
 pub struct Glisp {
-    nodes: HashMap<Gnode, Vec<Gnode>>,
+    nodes: HashMap<Gnode, Vec<&'static Gnode>>,
     next_id: u64,
 }
 
@@ -20,16 +21,22 @@ impl Glisp {
         }
     }
 
-    pub fn add_node<T: Into<NodeType>>(&mut self, node_type: T) -> Gnode {
+    pub fn add_node<T: Into<NodeType>>(&mut self, node_type: T) -> &'static Gnode {
         let id = self.next_id;
         let nt = node_type.into();
-        let gnode = Gnode::new(id, nt);
+        let gnode = Box::leak(Box::new(Gnode::new(id, nt)));
         self.next_id += 1;
+        self.nodes.insert(*gnode, vec![]);
         gnode
     }
 
-    pub fn add_link(&mut self, from: Gnode, to: &[Gnode]) {
-        self.nodes.entry(from).or_insert_with(Vec::new).extend(to.iter().cloned());
+    pub fn add_link(&mut self, from: &'static Gnode, to: &[&'static Gnode]) {
+        let nodes = self.nodes.entry(*from).or_insert(vec![]);
+        for node in to {
+            if !nodes.contains(node) {
+                nodes.push(*node);
+            }
+        }
     }
 }
 
@@ -49,7 +56,7 @@ impl Glisp {
                 }
             }
             NodeType::Cmp(op) => {
-                let children = self.nodes.get(gnode).unwrap();
+                let children = self.nodes.get(&gnode).unwrap();
                 let child1 = self.evaluate(&children[0]);
                 let child2 = self.evaluate(&children[1]);
                 let result = match op {
@@ -72,5 +79,17 @@ impl Glisp {
                 }
             }
         }
+    }
+}
+
+impl fmt::Display for Glisp {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for (node, links) in self.nodes.iter() {
+            writeln!(f, "{:?}", node);
+            for link in links {
+                writeln!(f, "\t{:?}", link);
+            }
+        }
+        Ok(())
     }
 }
